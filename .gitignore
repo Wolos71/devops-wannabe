@@ -1,0 +1,11 @@
+.oci/
+*.pem
+*.key
+*.pub
+.vscode/
+*.swp
+*.log
+*.DS_Store
+.env
+*.env
+
