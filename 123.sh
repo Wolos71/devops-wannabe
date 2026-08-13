@@ -33,6 +33,10 @@ while true; do
     # Sprawdzenie, czy się udało
     if [[ $? -eq 0 ]]; then
       echo "🎉 Sukces! Maszyna została utworzona w strefie $AD!"
+      curl -H "Content-Type: application/json" \
+           -X POST \
+           -d '{"content": "done, masz vpsa"}' \
+           "$DISCORD_WEBHOOK_URL"
       exit 0
     fi
   done
