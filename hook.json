@@ -1,0 +1,19 @@
+[
+    {
+        "id": "oracle_hook",
+        "execute-command": "/home/ubuntu/amper_bot/deploy.sh",
+        "command-working-directory": "/home/ubuntu/amper_bot",
+    
+
+        "trigger-rule": {
+            "match": {
+                "type": "payload-hash-sha256",
+                "secret": "6d1ae209217ffce711c35ea96c5b83e38c478d0a",
+                "parameter": {
+                    "type": "header",
+                    "name": "X-Hub-Signature-256"
+                }
+            }
+        }
+    }
+]
