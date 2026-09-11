@@ -5,15 +5,19 @@ set -a
 source .env
 set +a
 
-
-
 # ----- tymczasowe -----
 
 
 reqvar=("DISCORD_WEBHOOK_URL" "SUBNET_ID" "BOOT_VOLUME_ID" )
 err=()         #tablica na błędy
 
+pobierz_tenancy() {
+    local zmienna=$(oci iam compartment list --query "data[0].\"compartment-id\"" --raw-output)
+    echo "$zmienna"
+}
 
+TENANCY_ID=$(pobierz_tenancy)
+echo "$TENANCY_ID"
 
 for i in "${reqvar[@]}"; do
     if [[ -z "${!i}" ]]; then
@@ -28,8 +32,17 @@ if (( ${#err[@]} != 0 )); then
         echo "brak błędów"
 fi
 
-
-
+# tworzenie_instancji() {
+#     local ad="$1"
+#     echo "testy: oci compute instance launch \
+#   --availability-domain "$ad" \
+#   --compartment-id "$TENANCY_ID" \
+#   --shape "VM.Standard.A1.Flex" \
+#   --shape-config '{"ocpus": 2, "memory_in_gbs": 12}' \
+#   --source-boot-volume-id "$BOOT_VOLUME_ID" \
+#   --subnet-id "$SUBNET_ID" \
+#   --assign-public-ip true 2>&1
+# }
 
 
 
