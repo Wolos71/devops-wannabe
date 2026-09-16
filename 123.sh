@@ -54,7 +54,7 @@ tworzenie_instancji() {
  }
 
 
-discor() {
+discord() {
     local wiadomosc="$1"
     local payload
     payload=$(jq -n --arg tresc "$wiadomosc" '{content: $tresc}')
@@ -62,6 +62,14 @@ discor() {
     curl -s --fail -X POST -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
 }
 
+
+log() {
+    local wiadomosc="$1"
+    local znacznik_czasu
+    znacznik_czasu=$(date +"%d-%m-%Y %H.%M.%S" )
+
+    echo "[$znacznik_czasu - $wiadomosc]" >&2
+}
 
 
 # walidacja
