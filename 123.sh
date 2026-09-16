@@ -10,7 +10,16 @@ set +a
 
 reqvar=("TENANCY_ID" "DISCORD_WEBHOOK_URL" "SUBNET_ID" "BOOT_VOLUME_ID" )
 err=()         #tablica na błędy
-
+cmd=(     oci compute instance launch                                       #tablica, nie sting z eval, bo się posypią znaki specjalne
+        --availability-domain "$ad" 
+        --compartment-id "$TENANCY_ID" 
+        --shape "VM.Standard.A1.Flex" 
+        --shape-config '{"ocpus": 2, "memory_in_gbs": 12}' 
+        --source-boot-volume-id "$BOOT_VOLUME_ID" 
+        --subnet-id "$SUBNET_ID" 
+        --assign-public-ip true 
+        --no-retry
+        )
 
 for i in "${reqvar[@]}"; do
     if [[ -z "${!i}" ]]; then
@@ -27,15 +36,19 @@ fi
 
 tworzenie_instancji() {
    local ad="$1"
-   oci compute instance launch \
-   --availability-domain "$ad" \
-   --compartment-id "$TENANCY_ID" \
-   --shape "VM.Standard.A1.Flex" \
-   --shape-config '{"ocpus": 2, "memory_in_gbs": 12}' \
-   --source-boot-volume-id "$BOOT_VOLUME_ID" \
-   --subnet-id "$SUBNET_ID" \
-   --assign-public-ip true 2>&1
-   --no-retry
+
+   local wynik
+
+   wynik=$("${cmf[@]}" 2>&1)
+   local status=$?                      #trzyma out z ostaniej komendy
+   
+    if [[ $status -eq 0]]: then
+      return 0
+    else
+        echo "$wynik"
+        return $status
+    fi
+
  }
 
 
