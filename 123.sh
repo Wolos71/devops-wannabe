@@ -54,6 +54,14 @@ tworzenie_instancji() {
  }
 
 
+discor() {
+    local wiadomosc="$1"
+    local payload
+    payload=$(jq -n --arg tresc "$wiadomosc" '{content: $tresc}')
+
+    curl -s --fail -X POST -H "Content-Type: application/json" -d "$payload" "DISCORD_WEBHOOK_URL"
+}
+
 
 
 # walidacja
