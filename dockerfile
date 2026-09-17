@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl jq ca-cert
 #ca-certificates certy roota, dla curl i oci do weryfikacji https, rm -rf /car/lib/apt/lists/* usuwa listy pakietów
 
 
-RUN pip install --no-cache-dir oci cli
+RUN pip install --no-cache-dir oci-cli
 #w nowej linii/komendzie, po instalacji wyzej
 
 WORKDIR /app
