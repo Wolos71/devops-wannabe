@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# ----- tymczasowe -----
-set -a
-source .env
-set +a
-
-# ----- tymczasowe -----
 
 
 ADS=(
