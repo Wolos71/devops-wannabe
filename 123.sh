@@ -10,6 +10,11 @@ set +a
 
 reqvar=("TENANCY_ID" "DISCORD_WEBHOOK_URL" "SUBNET_ID" "BOOT_VOLUME_ID" )
 err=()         #tablica na błędy
+ADS=(
+  "cUfx:EU-FRANKFURT-1-AD-1"
+  "cUfx:EU-FRANKFURT-1-AD-2"
+  "cUfx:EU-FRANKFURT-1-AD-3"
+)
 
 
 for i in "${reqvar[@]}"; do
@@ -24,6 +29,8 @@ if (( ${#err[@]} != 0 )); then
     else
         echo "brak błędów"
 fi
+
+
 
 tworzenie_instancji() {
    local ad="$1"
@@ -63,7 +70,7 @@ discord() {
 }
 
 
-log() {
+log() {                                                                     #bez logowania do pliku, docker będzie logował na dysk
     local wiadomosc="$1"
     local znacznik_czasu
     znacznik_czasu=$(date +"%d-%m-%Y %H.%M.%S" )
@@ -71,6 +78,25 @@ log() {
     echo "[$znacznik_czasu - $wiadomosc]" >&2
 }
 
+komunikat=$(walidacja_zmiennych)
+if [[ $? -eq 0 ]]; then
+  while true; do
+    for AD in "${ADS[@]}"; do
+      if wynik=$(tworzenie_instancji "$AD"); then
+        discor "Sukces: utworzono instancję w strefie $AD" || log "Discord nie potwierdził wysyłki sukcesu"
+        exit 0
+      else
+        log "$wynik"
+        discor "$wynik" || log "Discord nie potwierdził wysyłki błędu"
+      fi
+    done
+    wait 10
+  done
+else
+  log "$komunikat"
+  discor "$komunikat" || log "Discord nie potwierdził wysyłki błędu walidacji"
+  exit 1
+fi
 
 # walidacja
 #   if
