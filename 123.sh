@@ -30,7 +30,7 @@ ADS=(
 
 
 walidacja_zmiennych() {
-  local reqvar=("TENANCY_ID" "DISCORD_WEBHOOK_URL" "SUBNET_ID" "BOOT_VOLUME_ID")
+  local reqvar=("TENANCY_ID" "DISCORD_WEBHOOK_URL" "SUBNET_ID" "IMAGE_ID")
   local err=()
 
   for i in "${reqvar[@]}"; do
@@ -56,7 +56,7 @@ tworzenie_instancji() {
         --compartment-id "$TENANCY_ID" 
         --shape "VM.Standard.A1.Flex" 
         --shape-config '{"ocpus": 2, "memory_in_gbs": 12}' 
-        --source-boot-volume-id "$BOOT_VOLUME_ID" 
+        --image-id "$IMAGE_ID"
         --subnet-id "$SUBNET_ID" 
         --assign-public-ip true 
         --no-retry
