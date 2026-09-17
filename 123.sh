@@ -8,8 +8,6 @@ set +a
 # ----- tymczasowe -----
 
 
-reqvar=("TENANCY_ID" "DISCORD_WEBHOOK_URL" "SUBNET_ID" "BOOT_VOLUME_ID" )
-err=()         #tablica na błędy
 ADS=(
   "cUfx:EU-FRANKFURT-1-AD-1"
   "cUfx:EU-FRANKFURT-1-AD-2"
@@ -17,19 +15,37 @@ ADS=(
 )
 
 
-for i in "${reqvar[@]}"; do
+# for i in "${reqvar[@]}"; do
+#     if [[ -z "${!i}" ]]; then
+#         err+=("błąd $i")
+#     fi
+# done
+
+
+# if (( ${#err[@]} != 0 )); then
+#     echo "tu są błędy ${err[*]}"
+#     else
+#         echo "brak błędów"
+# fi
+
+
+walidacja_zmiennych() {
+  local reqvar=("TENANCY_ID" "DISCORD_WEBHOOK_URL" "SUBNET_ID" "BOOT_VOLUME_ID")
+  local err=()
+
+  for i in "${reqvar[@]}"; do
     if [[ -z "${!i}" ]]; then
-        err+=("błąd $i")
+      err+=("błąd $i")
     fi
-done
+  done
 
-
-if (( ${#err[@]} != 0 )); then
-    echo "tu są błędy ${err[*]}"
-    else
-        echo "brak błędów"
-fi
-
+  if (( ${#err[@]} == 0 )); then
+    return 0
+  else
+    echo "${err[*]}"
+    return 1
+  fi
+}
 
 
 tworzenie_instancji() {
@@ -83,18 +99,18 @@ if [[ $? -eq 0 ]]; then
   while true; do
     for AD in "${ADS[@]}"; do
       if wynik=$(tworzenie_instancji "$AD"); then
-        discor "Sukces: utworzono instancję w strefie $AD" || log "Discord nie potwierdził wysyłki sukcesu"
+        discord "Sukces: utworzono instancję w strefie $AD" || log "Discord nie potwierdził wysyłki sukcesu"
         exit 0
       else
         log "$wynik"
-        discor "$wynik" || log "Discord nie potwierdził wysyłki błędu"
+        discord "$wynik" || log "Discord nie potwierdził wysyłki błędu"
       fi
     done
-    wait 10
+    sleep 10
   done
 else
   log "$komunikat"
-  discor "$komunikat" || log "Discord nie potwierdził wysyłki błędu walidacji"
+  discord "$komunikat" || log "Discord nie potwierdził wysyłki błędu walidacji"
   exit 1
 fi
 
