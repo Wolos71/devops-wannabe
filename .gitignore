@@ -10,3 +10,7 @@
 *.env
 hook.json
 *.save
+*.tfvars
+.terraform/
+*.tfstate
+*.tfstate.*
