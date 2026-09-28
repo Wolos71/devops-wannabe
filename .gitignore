@@ -14,3 +14,4 @@ hook.json
 .terraform/
 *.tfstate
 *.tfstate.*
+inventory.yml

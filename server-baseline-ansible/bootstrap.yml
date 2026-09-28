@@ -1,0 +1,31 @@
+---
+- name: przygotowanie nowej maszyny
+  hosts: webservers
+  become: true
+  vars:
+    ansible_user: ubuntu
+  vars_files:
+    - vault/pass.yml
+  
+
+  tasks:
+    - name: utwórz usera
+      ansible.builtin.user:
+        name: wolos
+        password: '{{ shapass }}'
+        shell: /bin/bash
+        state: present
+      no_log: true                      #brak logów na ekranie, bo moze wypisać hasha, DO DEBUGOWANIA USUŃ
+
+    - name: wgraj klucz publiczny
+      ansible.posix.authorized_key:
+        user: wolos
+        key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+        state: present
+
+    - name: nadaj sudo
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/wolos
+        content: "wolos ALL=(ALL) ALL\n"
+        mode: "0440"
+        validate: "visudo -cf %s"
