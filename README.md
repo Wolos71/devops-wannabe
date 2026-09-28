@@ -11,3 +11,5 @@ More projects will be added here over time.
 ## About
 
 This repo is my learning-in-public space while transitioning into DevOps — background in Python and coordination/admin work, moving toward infrastructure and automation.
+
+> **Note:** All README files in this repo (including this one) are written with the help of an LLM. The code itself is my own work”
