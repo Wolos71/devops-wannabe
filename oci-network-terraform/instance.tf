@@ -20,6 +20,6 @@ resource "oci_core_instance" "main" {
   }
 
   metadata = {
-    ssh_authorized_keys = file("~/.ssh/terraform_key.pub")
+    ssh_authorized_keys = file("~/.ssh/id_ed25519.pub")
   }
 }
