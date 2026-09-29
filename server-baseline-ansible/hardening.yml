@@ -1,0 +1,46 @@
+---
+- name: blokada konta domyślnego
+  hosts: webservers
+  become: true
+
+
+
+  tasks:
+    - name: zawęzenie logowania do jednego usera
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^AllowUsers'
+        line: "AllowUsers wolos"
+        validate: "sshd -t -f %s"
+      notify: przeladuj ssh
+    
+    - name: usunięcie sudoers dla ubuntu
+      ansible.builtin.file:
+        path: /etc/sudoers.d/90-cloud-init-users
+        state: absent
+
+    - name: wylaczenie logowania haslem
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: "PasswordAuthentication no"
+        validate: "sshd -t -f %s"
+      notify: przeladuj ssh
+
+
+    - name: wylaczenie logowania roota
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: "PermitRootLogin no"
+        validate: "sshd -t -f %s"
+      notify: przeladuj ssh
+
+
+
+
+  handlers:
+    - name: przeladuj ssh
+      ansible.builtin.service:
+        name: ssh
+        state: restarted

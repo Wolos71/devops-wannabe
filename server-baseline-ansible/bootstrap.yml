@@ -15,7 +15,7 @@
         password: '{{ shapass }}'
         shell: /bin/bash
         state: present
-      no_log: true                      #brak logów na ekranie, bo moze wypisać hasha, DO DEBUGOWANIA USUŃ
+      no_log: true                      #brak logów na ekranie, bo moze wypisać hasha, DO DEBUGOWANIA USUNĄĆ
 
     - name: wgraj klucz publiczny
       ansible.posix.authorized_key:
@@ -26,6 +26,6 @@
     - name: nadaj sudo
       ansible.builtin.copy:
         dest: /etc/sudoers.d/wolos
-        content: "wolos ALL=(ALL) ALL\n"
+        content: "wolos ALL=(ALL) NOPASSWD: ALL\n"
         mode: "0440"
         validate: "visudo -cf %s"
