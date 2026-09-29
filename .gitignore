@@ -15,3 +15,4 @@ hook.json
 *.tfstate
 *.tfstate.*
 inventory.yml
+vault/
