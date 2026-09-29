@@ -18,7 +18,7 @@ Two playbooks, run in order, each connecting as a different user:
 ## Usage
 
 1. Copy `inventory.yml.example` to `inventory.yml` and fill in the real IP. Keep `ansible_user: ubuntu` for the first run.
-2. Create `vault/pass.yml` (user's password hash, `openssl passwd -6`) and `vault/userpass.yml` (the same password in plain text, needed for `become` at sudo time) with `ansible-vault create <path>`. Both are referenced via `vars_files` in the relevant playbook.
+2. Create `vault/pass.yml` (user's password hash, `openssl passwd -6`) and `vault/userpass.yml` (the same password in plain text, needed for `become` at sudo time) with `ansible-vault create <path>`. **These are not committed** (see Design notes) — recreate them locally, or restore from your own backup.
 3. Run bootstrap:
 ```bash
    ansible-playbook -i inventory.yml bootstrap.yml --ask-vault-pass
@@ -38,6 +38,7 @@ Two playbooks, run in order, each connecting as a different user:
 - **OCI-specific assumption:** `hardening.yml` edits the main `/etc/ssh/sshd_config` directly rather than adding a drop-in under `sshd_config.d/`. This works because OCI's cloud-init drop-in only sets `PasswordAuthentication` (to the same value this playbook sets), and doesn't touch `AllowUsers` or `PermitRootLogin` at all. On a different cloud provider, a drop-in might silently override these settings — check `sshd -T` after running.
 - **`AllowUsers wolos` alone would already block root and `ubuntu`** login; `PermitRootLogin no` is a deliberate second layer of defense.
 - Every `sshd_config` change is validated with `sshd -t -f %s` before being written, and `ssh` is only restarted (via a handler) if a task actually changed something.
+- **The `vault/` directory itself is gitignored, not committed** — even encrypted, as a deliberate defense-in-depth choice. This means the vault files exist only locally; back them up separately (password manager, encrypted drive) since losing them means losing the recorded password/hash entirely (SSH key access remains unaffected).
 
 ## Possible next steps
 
