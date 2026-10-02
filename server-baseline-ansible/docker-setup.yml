@@ -1,0 +1,33 @@
+---
+- name: instalacja dockera
+  hosts: webservers
+  become: true
+
+
+  tasks:
+    - name: dodanie repo dockera
+      ansible.builtin.deb822_repository:
+        name: docker
+        install_python_debian: true
+        uris: https://download.docker.com/linux/ubuntu
+        suites: "{{ ansible_facts['distribution_release'] }}"
+        components: stable
+        signed_by: "https://download.docker.com/linux/ubuntu/gpg"
+
+
+    - name: instalacja pakietów dockera
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: true
+
+
+    - name: dodanie do grupy
+      ansible.builtin.user:
+        name: wolos
+        groups: docker
+        append: true
+
